@@ -1,8 +1,18 @@
 "use client";
 
+import Link from "next/link";
+import { useRouter, usePathname } from "next/navigation";
+
 export default function Footer() {
+  const router = useRouter();
+  const pathname = usePathname();
+
   const scrollTo = (id: string) => {
-    document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
+    if (pathname === "/") {
+      document.querySelector(id)?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      router.push(`/${id}`);
+    }
   };
 
   return (
@@ -44,6 +54,14 @@ export default function Footer() {
                   </button>
                 </li>
               ))}
+              <li>
+                <Link
+                  href="/privacy"
+                  className="text-slate-500 hover:text-slate-300 text-sm transition-colors duration-150"
+                >
+                  Privacy Policy
+                </Link>
+              </li>
             </ul>
           </div>
 
