@@ -56,6 +56,14 @@ export default function Footer() {
               ))}
               <li>
                 <Link
+                  href="/tos"
+                  className="text-slate-500 hover:text-slate-300 text-sm transition-colors duration-150"
+                >
+                  Terms of Service
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/privacy"
                   className="text-slate-500 hover:text-slate-300 text-sm transition-colors duration-150"
                 >
