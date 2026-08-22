@@ -13,9 +13,9 @@ import emailjs from "@emailjs/browser";
 // 4. Copy your Public Key from Account > API Keys
 // Replace the three constants below with your actual values.
 // ---------------------------------------------------------
-const EMAILJS_SERVICE_ID = "YOUR_SERVICE_ID";
-const EMAILJS_TEMPLATE_ID = "YOUR_TEMPLATE_ID";
-const EMAILJS_PUBLIC_KEY = "YOUR_PUBLIC_KEY";
+const EMAILJS_SERVICE_ID = "service_1vauz1b";
+const EMAILJS_TEMPLATE_ID = "template_wqlsj2i";
+const EMAILJS_PUBLIC_KEY = "KpXcPsk1ygX9gvWah";
 
 type FormData = {
   from_name: string;
@@ -49,6 +49,7 @@ const MIN_FILL_TIME_MS = 4000; // humans take at least 4 seconds to fill a form
 
 export default function ContactSection() {
   const [form, setForm] = useState<FormData>(EMPTY);
+  const [smsConsent, setSmsConsent] = useState(false);
   const [honeypot, setHoneypot] = useState("");
   const [errors, setErrors] = useState<Partial<FormData>>({});
   const [status, setStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
@@ -94,9 +95,15 @@ export default function ContactSection() {
     if (!validate()) return;
     setStatus("sending");
     try {
-      await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, { ...form }, EMAILJS_PUBLIC_KEY);
+      await emailjs.send(
+        EMAILJS_SERVICE_ID,
+        EMAILJS_TEMPLATE_ID,
+        { ...form, sms_consent: smsConsent ? "Yes" : "No" },
+        EMAILJS_PUBLIC_KEY
+      );
       setStatus("success");
       setForm(EMPTY);
+      setSmsConsent(false);
     } catch {
       setStatus("error");
     }
@@ -276,6 +283,40 @@ export default function ContactSection() {
                     </p>
                   </div>
                 )}
+
+                <div className="flex items-start gap-2.5">
+                  <input
+                    type="checkbox"
+                    id="sms_consent"
+                    name="sms_consent"
+                    checked={smsConsent}
+                    onChange={(e) => setSmsConsent(e.target.checked)}
+                    className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300 text-navy-800 focus:ring-navy-600 cursor-pointer"
+                  />
+                  <label htmlFor="sms_consent" className="text-slate-500 text-xs leading-relaxed cursor-pointer">
+                    By submitting this form you agree to receive Customer Care and Account Notification
+                    messages from JSR Insurance Services LLC. Reply STOP to opt-out; Reply HELP for support;
+                    Message &amp; data rates may apply; Messaging frequency may vary. Visit{" "}
+                    <a
+                      href="https://www.jsrcoverage.com/privacy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-navy-700 underline hover:text-navy-800"
+                    >
+                      our privacy policy
+                    </a>{" "}
+                    and{" "}
+                    <a
+                      href="https://jsrcoverage.com/tos"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-navy-700 underline hover:text-navy-800"
+                    >
+                      our Terms of Service
+                    </a>
+                    .
+                  </label>
+                </div>
 
                 <div className="flex items-center justify-between pt-1">
                   <p className="text-slate-400 text-xs">Fields marked <span className="text-red-500">*</span> are required.</p>
