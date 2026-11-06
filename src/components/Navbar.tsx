@@ -5,13 +5,27 @@ import { useRouter, usePathname } from "next/navigation";
 
 const navLinks = [
   { label: "Home", href: "#home" },
-  { label: "About", href: "#about" },
   { label: "Services", href: "#services" },
+  { label: "About", href: "#about" },
   { label: "Contact", href: "#contact" },
+];
+
+const formLinks = [
+  {
+    label: "Freight Bond Application",
+    href: "/forms/freight-bond-application.pdf",
+    filename: "Freight Bond Application.pdf",
+  },
+  {
+    label: "Trucking Insurance Application",
+    href: "/forms/trucking-insurance-application.pdf",
+    filename: "Trucking Insurance Application.pdf",
+  },
 ];
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const [formsOpen, setFormsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
@@ -24,6 +38,7 @@ export default function Navbar() {
 
   const scrollTo = (href: string) => {
     setMenuOpen(false);
+    setFormsOpen(false);
     if (pathname === "/") {
       document.querySelector(href)?.scrollIntoView({ behavior: "smooth" });
     } else {
@@ -51,7 +66,54 @@ export default function Navbar() {
 
           {/* Desktop links */}
           <div className="hidden md:flex items-center gap-1">
-            {navLinks.map((l) => (
+            <button
+              onClick={() => scrollTo("#home")}
+              className="text-slate-300 hover:text-white text-sm px-4 py-2 rounded transition-colors duration-150"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => scrollTo("#services")}
+              className="text-slate-300 hover:text-white text-sm px-4 py-2 rounded transition-colors duration-150"
+            >
+              Services
+            </button>
+
+            <div
+              className="relative"
+              onMouseEnter={() => setFormsOpen(true)}
+              onMouseLeave={() => setFormsOpen(false)}
+            >
+              <button
+                onClick={() => setFormsOpen((open) => !open)}
+                className="text-slate-300 hover:text-white text-sm px-4 py-2 rounded transition-colors duration-150 inline-flex items-center gap-1"
+                aria-haspopup="menu"
+                aria-expanded={formsOpen}
+              >
+                Forms
+                <span aria-hidden="true" className={`text-xs transition-transform ${formsOpen ? "rotate-180" : ""}`}>
+                  ▾
+                </span>
+              </button>
+              {formsOpen && (
+                <div className="absolute top-full right-0 mt-1 w-64 rounded-md bg-navy-900 border border-navy-700 shadow-xl py-2" role="menu">
+                  {formLinks.map((form) => (
+                    <a
+                      key={form.href}
+                      href={form.href}
+                      download={form.filename}
+                      onClick={() => setFormsOpen(false)}
+                      className="block px-4 py-2.5 text-sm text-slate-300 hover:text-white hover:bg-navy-800 transition-colors"
+                      role="menuitem"
+                    >
+                      {form.label}
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {navLinks.filter((l) => l.label === "About" || l.label === "Contact").map((l) => (
               <button
                 key={l.href}
                 onClick={() => scrollTo(l.href)}
@@ -83,17 +145,60 @@ export default function Navbar() {
         </div>
 
         {/* Mobile menu */}
-        <div className={`md:hidden overflow-hidden transition-all duration-200 ${menuOpen ? "max-h-64 pb-4" : "max-h-0"}`}>
+        <div className={`md:hidden overflow-hidden transition-all duration-200 ${menuOpen ? "max-h-[32rem] pb-4" : "max-h-0"}`}>
           <div className="border-t border-navy-700 pt-3 space-y-1">
-            {navLinks.map((l) => (
-              <button
-                key={l.href}
-                onClick={() => scrollTo(l.href)}
-                className="block w-full text-left text-slate-300 hover:text-white text-sm px-3 py-2.5 rounded transition-colors duration-150"
-              >
-                {l.label}
-              </button>
-            ))}
+            <button
+              onClick={() => scrollTo("#home")}
+              className="block w-full text-left text-slate-300 hover:text-white text-sm px-3 py-2.5 rounded transition-colors duration-150"
+            >
+              Home
+            </button>
+            <button
+              onClick={() => scrollTo("#services")}
+              className="block w-full text-left text-slate-300 hover:text-white text-sm px-3 py-2.5 rounded transition-colors duration-150"
+            >
+              Services
+            </button>
+
+            <button
+              onClick={() => setFormsOpen((open) => !open)}
+              className="flex w-full items-center justify-between text-left text-slate-300 hover:text-white text-sm px-3 py-2.5 rounded transition-colors duration-150"
+              aria-expanded={formsOpen}
+            >
+              <span>Forms</span>
+              <span aria-hidden="true" className={`text-xs transition-transform ${formsOpen ? "rotate-180" : ""}`}>▾</span>
+            </button>
+            {formsOpen && (
+              <div className="ml-3 border-l border-navy-700">
+                {formLinks.map((form) => (
+                  <a
+                    key={form.href}
+                    href={form.href}
+                    download={form.filename}
+                    onClick={() => {
+                      setFormsOpen(false);
+                      setMenuOpen(false);
+                    }}
+                    className="block pl-4 pr-3 py-2.5 text-sm text-slate-400 hover:text-white"
+                  >
+                    {form.label}
+                  </a>
+                ))}
+              </div>
+            )}
+
+            <button
+              onClick={() => scrollTo("#about")}
+              className="block w-full text-left text-slate-300 hover:text-white text-sm px-3 py-2.5 rounded transition-colors duration-150"
+            >
+              About
+            </button>
+            <button
+              onClick={() => scrollTo("#contact")}
+              className="block w-full text-left text-slate-300 hover:text-white text-sm px-3 py-2.5 rounded transition-colors duration-150"
+            >
+              Contact
+            </button>
             <div className="pt-2 px-3">
               <button
                 onClick={() => scrollTo("#contact")}
